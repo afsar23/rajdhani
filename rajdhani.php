@@ -11,14 +11,14 @@ use Afsar\wtk;
  * that starts the plugin.
  *
  * @link              wptoolkit.com
- * @since             0.0.0
+ * @since             0.0.1
  * @package           Wptoolkit
  *
  * @wordpress-plugin
  * Plugin Name:       [Rajdjhani]
  * Plugin URI:        wptoolkit.com
  * Description:       Bespoke plugin for Rajdhani Connections
- * Version:           0.0.0
+ * Version:           0.0.1
  * Author:            Mohammed Afsar
  * Author URI:        wptoolkit.com
  * License:           GPL-2.0+
