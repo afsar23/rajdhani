@@ -545,6 +545,9 @@ function custom_nav_menu_items( $items, $menu ){
 	return $items;
 }
 
+
+
+
 function wtk_menu_items( $menu_name ){
 
 	global $wtk;
@@ -561,7 +564,7 @@ function wtk_menu_items( $menu_name ){
 				$items[] = wtk_custom_nav_menu_item( 'Privacy Policy', 	home_url().'/privacy-policy', 	12,10 ); 
 				$items[] = wtk_custom_nav_menu_item( 'Terms of Use', 	home_url().'/terms-conditions', 	13,10 ); 
 				$items[] = wtk_custom_nav_menu_item( 'Cookie Policy', 	home_url().'/cookie-policy', 	13,10 ); 
-				*/
+				
 			$items[] = wtk_custom_nav_menu_item( 'About Us', 			home_url().'/about-us',  		20,0 ); 										
 			$items[] = wtk_custom_nav_menu_item( 'Contact Us', 			home_url().'/contact-us',  		30,0 ); 										
 							

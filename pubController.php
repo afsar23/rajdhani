@@ -38,14 +38,53 @@ require_once plugin_dir_path( __FILE__ ) . 'pubScriptsStyles.php';
 				return $items;
 			}
 
+
+add_filter('the_content', 'Afsar\wtk\wtk_restrict_bios', -1 );
+function wtk_restrict_bios( $content ){
+	
+	if (!is_user_logged_in()) {	
+		$post = get_post();		
+		$categories = get_the_category($post);
+		foreach ($categories as $categ) {
+			if ($categ->name == 'Biographical') {
+				if (is_single()) {
+					$content = "<b><i>SORRY! Biographical content is restricted for guest visitors.</i></b>";
+				} else {
+					$content = "--- Restricted Content ---";					
+				}
+				break;
+			}
+		}
+	}
+	
+	return $content;
+
+}
+
+add_filter( 'the_content_more_link', 'Afsar\wtk\wtk_modify_read_more_link' );
+function wtk_modify_read_more_link() {
+ return '<a class="more-link" href="' . get_permalink() . '">Contrinue reading...</a>';
+}
+
+
+
+
 	
 add_shortcode( 'wtk_contactus', 'Afsar\wtk\wtk_ContactUs');
 function wtk_ContactUs($pg_atts = [], $pg_content = null, $pg_tag = '') {
    // normalize attribute keys, lowercase
     $pg_atts = array_change_key_case((array)$pg_atts, CASE_LOWER);
 	//die("tag=".$pg_tag);
+
+	ob_start();   // start buffering content
+
 	require_once plugin_dir_path( __FILE__ ) . 'pubContactUs.php';
+	
 	ContactUs();
+	
+	$content = ob_get_clean(); // store buffered output content.
+
+    return $content; // Return the content.	
 }
 
 
@@ -57,36 +96,6 @@ add_action( 'wp_enqueue_scripts', function() {
 function SubTitle($sub) {
 	echo '<div class="subtitle"><h3>'.$sub.'</h3></div>';
 }
-
-
-add_shortcode( 'wtk_appadmin', 'Afsar\wtk\wtk_appadmin');
-function wtk_appadmin() {
-	
-	require_once plugin_dir_path( __FILE__ ) . 'pubAppAdmin.php';
-	
-	ob_start();   // start buffering content
-	
-	AppAdmin();
-	$content = ob_get_clean(); // store buffered output content.
-
-    return $content; // Return the content.
-}
-
-
-add_shortcode( 'wtk_maint_salaahtimes', 'Afsar\wtk\wtk_maint_salaahtimes');
-function wtk_maint_salaahtimes() {
-	
-	require_once plugin_dir_path( __FILE__ ) . 'pubMaintSalaahTimes.php';
-	
-	ob_start();   // start buffering content
-	
-	//echo "<h1>HellooooooOO!</h1>";
-	tabMaintSalaahTimes();
-	$content = ob_get_clean(); // store buffered output content.
-
-    return $content; // Return the content.
-}
-
 
 add_shortcode( 'wtk_viewanytable', 'Afsar\wtk\wtk_viewanytable');
 function wtk_viewanytable() {

@@ -42,10 +42,13 @@ $wtk = new Wptoolkit(__FILE__);
 $pdb = new Database();
 $db = $pdb->getConnection();
 
+
+
 CreateOrUpdateDbSchema();
 //register_activation_hook( __FILE__, 'Afsar\wtk\CreateOrUpdateDbSchema' );
 
 wtk_create_plugin_menus();
+
 
 			// If this file is called directly, abort.
 			if ( ! defined( 'WPINC' ) ) {
@@ -145,6 +148,4 @@ function wtkContext() {
 		$current_url = wp_parse_url( add_query_arg( array( ) ) );
 		return strpos( $current_url['path'] ?? '/', $rest_url['path'], 0 ) === 0;
 	}
-
-
 	

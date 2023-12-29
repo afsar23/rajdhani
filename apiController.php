@@ -25,12 +25,7 @@ define("API_NAMESPACE","wtk/v1");
 //add_filter( 'nonce_life', function () { return 1 * HOUR_IN_SECONDS; } );
 
 
-add_action( 'rest_api_init', 'Afsar\wtk\api_register_routes' );
-
-
-require_once plugin_dir_path( __FILE__ ) . 'api_Upload.php';
-require_once plugin_dir_path( __FILE__ ) . 'api_Mosques.php';
-				
+add_action( 'rest_api_init', 'Afsar\wtk\api_register_routes' );		
 function api_register_routes($request = null) {
 
 	//$pdata  = json_decode(file_get_contents("php://input"));   // all the posted data required to perform the method
@@ -112,22 +107,7 @@ function api_register_routes($request = null) {
 		'access_type'=>'LOGGED_IN'		
 		]		
     ) );
-	
-	register_rest_route( API_NAMESPACE, '/mosques', array(
-		[      
-		'methods'  => [ 'POST' ],			
-		'callback' => 'Afsar\wtk\api_mosques',
-		'permission_callback' => 'Afsar\wtk\wtk_api_permissions_check',	
-		'access_type'=>'NONCE'
-		]			
-	) );
-	
-	register_rest_route( API_NAMESPACE, '/import_csv', [
-		'methods' => [ 'POST' ],
-		'callback' => 'Afsar\wtk\importCSVHandler',
-		'permission_callback' => 'Afsar\wtk\wtk_api_permissions_check',
-		'access_type'=>'LOGGED_IN'
-	] );	
+			
 
 }
 
@@ -554,21 +534,7 @@ function XXXXXXsend_api_response($response) {
 }
 
 
-/**
- * Validate a request argument based on details registered to the route.
- *
- * @param  mixed            $value   Value of the argument.
- * @param  WP_REST_Request  $request The current request object.
- * @param  string           $param   Key of the parameter (argument name, eg 'country').
- * @return WP_Error|boolean
- */
-function wtk_api_arg_validate_callback( $value, $request, $param ) {
 
-    // If the 'country' argument is not a string return an error.
-    if ( ! is_string( $value ) ) {
-        return new WP_Error( 'rest_invalid_param', esc_html__( 'The country argument must be a string.', MY_TEXT_DOMAIN ), array( 'status' => 400 ) );
-    }
-}
  
 /**
  * Sanitize a request argument based on details registered to the route.
@@ -582,28 +548,6 @@ function wtk_api_arg_sanitize_callback( $value, $request, $param ) {
     // It is as simple as returning the sanitized value.
 	 return sanitize_text_field( $value );
 }
- 
-/**
- * We can use this function to contain our arguments for the example product endpoint.
- */
-function wtk_api_arguments() {
-	
-    $args = array();
-
-    // Here we add our PHP representation of JSON Schema.
-    $args['country'] = array(
-        'description'       => esc_html__( 'This is the argument our endpoint returns.', MY_TEXT_DOMAIN ),
-        'type'              => 'string',
-        'validate_callback' => 'mtl_api_arg_validate_callback',
-        'sanitize_callback' => 'mtl_api_arg_sanitize_callback',
-        'required'          => true,
-    );	
-	
-	return $args;
-	
-}
-
-
 
 
 
@@ -646,7 +590,7 @@ function api_users_register(\WP_REST_Request $request = null) {
 	// check verification code matches the hash
 	if (!password_verify($email . $token_raw, $token_hash)) {
 		$response = [	"status"		=> "error",	"message"		=> "Invalid Verification Code"];	
-	} elseif (false) { // ($referral_code <> get_option("wtk_referral_code","Oops!")) {
+	} elseif ($referral_code <> get_option("wtk_referral_code","Oops!")) {
 		$response = [	"status"		=> "error",	"message"		=> "Invalid Referral Code"];	
 	} else { // all good so far....
 		
