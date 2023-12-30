@@ -813,30 +813,25 @@ function delete_random_content(\WP_REST_Request $request = null) {
 
 function api_contactus(\WP_REST_Request $request = null) {
 
-	global $wtk;
+	global $app;
 	global $db;
-
-/*
-	Need a robust means of retrieving inputs to API (request, form, postman)
-*/
-	$current_user = wp_get_current_user();
-
-	$parameters = $request->get_json_params();  //this returns null when called by postman!
-	if (is_null( $parameters )) {
-		$parameters = $_REQUEST;
-	} else {
-		$queryParams = $request->get_query_params();
-		$parameters = array_merge($queryParams, $parameters);
+	
+	$params = $request->get_params();
+	if (isset($_REQUEST['request'])) {				// w2ui sends postData in a request variable!
+		$params = array_merge(json_decode(stripslashes($_REQUEST['request']),true), $params);
+		unset($params['request']);
 	}
+	$params = stripslashes_deep($params);
+
+	$current_user = wp_get_current_user();
 	
 	if ( !is_user_logged_in() ) {
 		// ensure math captcha has been answered
-		if ($parameters["f_banda"] != $parameters["f_jawab"]) {
+		if ($params["f_banda"] != $params["f_jawab"]) {
 			return [ "status"=>"error", "message" => "Incorrect answer to human check!"];
 		}            
 		// ensure valid email is provided
-
-		$email 	=	htmlspecialchars(stripslashes(strip_tags($parameters["f_email"])));
+		$email 	=	htmlspecialchars(stripslashes(strip_tags($params["f_email"])));
 		// validate email here
 		
 		$validemail = true; //validemail();
@@ -845,15 +840,14 @@ function api_contactus(\WP_REST_Request $request = null) {
 			return [	"status" => "error", "message" => "Invalid email address" ];
 		}            
 
-
 	} else {
-		$email = $current_user->email; 
+		$email = $current_user->user_email; 
 	}
 		
 	// now check subject and message...
-	$fullname 	=	htmlspecialchars(stripslashes(strip_tags($parameters["f_fullname"])));
-	$subject 	=	htmlspecialchars(stripslashes(strip_tags($parameters["f_subject"])));
-	$message 	=	htmlspecialchars(stripslashes(strip_tags($parameters["f_message"])));
+	$fullname 	=	htmlspecialchars(stripslashes(strip_tags($params["f_fullname"])));
+	$subject 	=	htmlspecialchars(stripslashes(strip_tags($params["f_subject"])));
+	$message 	=	htmlspecialchars(stripslashes(strip_tags($params["f_message"])));
 
 	If (!($subject) or !($message)) {
 		return [ "status"=>"error", "message" => "Please complete all the fields"];            
@@ -863,13 +857,13 @@ function api_contactus(\WP_REST_Request $request = null) {
 	$now = date('Y-m-d H:i:s');
 	$sql = "
 		INSERT INTO ".prefix("contactus")."
-			SET userid          = $current_user->ID,
-				fullname		= :fullname,
+			SET fullname		= :fullname,
 				email    		= :email,
 				subject         = :subject,
 				message         = :message,
 				datecreated     = :now
 		";
+		
 		  
 	// prepare the query
 	$stmt = $db->prepare($sql);
@@ -881,7 +875,8 @@ function api_contactus(\WP_REST_Request $request = null) {
 	$stmt->bindParam(':now', $now);
 
 	// execute the query, also check if query was successful
-	$result = $stmt->execute();            
+	$result = $stmt->execute();
+
 	if ($result) {
 		
 		// now try emailing to admins but that is not critical...we do have a log of the feedback in the database!
@@ -890,12 +885,12 @@ function api_contactus(\WP_REST_Request $request = null) {
 		//wp_mail($to_email, $subject, $message);
 		
 		$response = [	"status"		=> "success",
-							"message"		=> "Thank you for your message / feedback."
+							"message"		=> "Thank you for your message / feedback"
 						];                     
 
 	} else {
 		$response = [	"status"		=> "error",
-							"message"		=> "Registration failed",
+							"message"		=> "Some system problem. Please try again!",
 							"userid"		=> $db->errorInfo()
 						];            
 	}
