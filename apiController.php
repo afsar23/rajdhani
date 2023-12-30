@@ -131,6 +131,7 @@ function wtk_api_permissions_check(\WP_REST_Request $request = null) {
 	//return ["status"=>"error","message"=>$this_route];
 
 	switch($access_type) {
+		case "PUBLIC": break;   // allow!!	
 		case "NONCE":	
 			$nonce = isset($params['_wpnonce']) ? $params['_wpnonce'] : ''; 
 			if (!wp_verify_nonce($nonce, wtkNonceKey())) {
@@ -234,8 +235,6 @@ function api_after_callback( $api_response, $handler, \WP_REST_Request $request 
 			$api_response = ["status"=>"error","message"=>"Wordpress API access is disabled!"];
 		}
 	}	
-
-
 
 	LogApiEnd($wtk->api_call_id ,$api_response); 
 				
