@@ -711,18 +711,17 @@ function updatepassword(\WP_REST_Request $request = null) {
 
 	global $wtk;
 	global $wpdb;
-	global $db;
+	global $db;	
 	
-	$parameters = $request->get_json_params();  //this returns null when called by postman!
-	if (is_null( $parameters )) {
-		$parameters = $_REQUEST;
-	} else {
-		$queryParams = $request->get_query_params();
-		$parameters = array_merge($queryParams, $parameters);
+	$params = $request->get_params();
+	if (isset($_REQUEST['request'])) {				// w2ui sends postData in a request variable!
+		$params = array_merge(json_decode(stripslashes($_REQUEST['request']),true), $params);
+		unset($params['request']);
 	}
-
+	$params = stripslashes_deep($params);
+	
 	try {       
-		$user = GetUserFromToken($parameters["token"]);                      
+		$user = GetUserFromToken($params["token"]);                      
 	}
 	catch (\Throwable $e) {
 		// simply store the token validation results to allow uses cases to decide their own course of action
@@ -744,7 +743,7 @@ function updatepassword(\WP_REST_Request $request = null) {
 	// hash the password before saving to database
 
 	//$password_hash = password_hash($this->user_pass, PASSWORD_BCRYPT);
-	$password_hash = wp_hash_password($parameters["user_pass"]);
+	$password_hash = wp_hash_password($params["user_pass"]);
 	
 	$stmt->bindParam(':user_pass', $password_hash);
 
@@ -762,7 +761,6 @@ function updatepassword(\WP_REST_Request $request = null) {
 	}
 
 	$stmt = null;	
-	$db = null;
 
 	return rest_ensure_response($response,200);
 

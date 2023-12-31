@@ -211,21 +211,21 @@ function reset_password() {
     $api_url        = get_rest_url(null,"wtk/v1/update_password");		// custom password reset link
     $jsCallBack     = "postFormProcessing";
 
-	$JWTToken = (isset($_REQUEST["token"])) ? $_REQUEST["token"] : "oops this ain't gonna validate";
+	$JWTToken = (isset($_REQUEST["token"])) ? $_REQUEST["token"] : htmlspecialchars($_COOKIE["jwt_token"]);
 	//echo "<div>".$JWTToken."</div>";
 
 	$tokenvalidation = JWTTokenValidation($JWTToken);
 	//echo printable($tokenvalidation);
 
-    if ($tokenvalidation["status"] =="success") {
+    if ( $tokenvalidation["status"] =="success" ) {
 
 		?>
 			<div id="response"></div>
 			<form id='pwreset_form' action='javascript:;' onsubmit="submitForm(this,'<?=$api_url?>',<?=$jsCallBack?>);"> 
 				<div class='form-group'>
 					<label for='password'>New Password</label>
-					<input type='password' class='form-control' id='user_pass' name='user_pass' placeholder='Enter new password' />
-					<input type='hidden' value='<?=$_GET["token"]?>' name='token' id='token' />
+					<input type='password' class='form-control' id='user_pass' name='user_pass' placeholder='Enter new password' required />
+					<input type='hidden' value='<?=$JWTToken?>' name='token' id='token' />
 				</div>
 				<?php 
 					wp_nonce_field(wtkNonceKey(), '_wpnonce');
@@ -233,8 +233,10 @@ function reset_password() {
 				<button type='submit' class='btn btn-primary'>Reset Password</button>
 			</form>
 			
-			<div><a href="<?php echo home_url("/my-account/?fnc=login"); ?>">Login</a></div>
-
+			<?php if (!is_user_logged_in()) { ?>
+				<div><a href="<?php echo home_url("/my-account/?fnc=login"); ?>">Login</a></div>
+			<?php } ?>
+			
 		<?php
 
     } else {

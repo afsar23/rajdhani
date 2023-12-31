@@ -190,7 +190,6 @@ function my_account($pg_atts = [], $pg_content = null, $pg_tag = '') {
 		case "register": 			$subtitle = "Register";				break;
 		case "profile": 			$subtitle = "Edit Profile"; 		break;
 		case "settings":			$subtitle = "Settings";				break;
-		case "change_password": 	$subtitle = "Change Password"; 		break;
 		case "reset_password":		$subtitle = "Reset Your Password";	break;
 		case "welcome":				$subtitle = "Welcome!";	break;		
 		//case "logout":				$subtitle = "Logout";				break;										

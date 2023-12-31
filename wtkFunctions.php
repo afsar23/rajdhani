@@ -572,7 +572,7 @@ function wtk_menu_items( $menu_name ){
 				if ( is_user_logged_in() ) {
 					$items[] = wtk_custom_nav_menu_item( 'Profile', 		home_url().'/my-account?fnc=profile',			1,999 ); 						
 					$items[] = wtk_custom_nav_menu_item( 'Settings', 		home_url().'/my-account?fnc=settings',		2,999);	
-					$items[] = wtk_custom_nav_menu_item( 'Change Password', home_url().'/my-account?fnc=change_password',	3,999 );
+					$items[] = wtk_custom_nav_menu_item( 'Reset Password', home_url().'/my-account?fnc=reset_password',	3,999 );
 					$items[] = wtk_custom_nav_menu_item( 'Logout', 			wp_logout_url('my-account?fnc=login'),	4,999 );
 				} else {
 					$items[] = wtk_custom_nav_menu_item( 'Login', 			home_url().'/my-account?fnc=login',			1,999 ); 						
@@ -586,7 +586,7 @@ function wtk_menu_items( $menu_name ){
 			if ( is_user_logged_in() ) {
 				$items[] = wtk_custom_nav_menu_item( 'Profile', 		home_url().'/my-account?fnc=profile',			1,0 ); 						
 				$items[] = wtk_custom_nav_menu_item( 'Settings', 		home_url().'/my-account?fnc=settings',		2,0 );	
-				$items[] = wtk_custom_nav_menu_item( 'Change Password', home_url().'/my-account?fnc=change_password',	3,0 );
+				$items[] = wtk_custom_nav_menu_item( 'Reset Password', 	home_url().'/my-account?fnc=reset_password',	3,0 );
 				$items[] = wtk_custom_nav_menu_item( 'Logout', 			wp_logout_url('my-account?fnc=login'),	4,0 );
 			} else {
 				$items[] = wtk_custom_nav_menu_item( 'Login', 			home_url().'/my-account?fnc=login',			1,0 ); 						
