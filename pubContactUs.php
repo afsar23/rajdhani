@@ -2,11 +2,8 @@
 namespace Afsar\wtk;
 use Afsar\wtk;
 
-use Formr;
 
 defined('ABSPATH') or die("Cannot access pages directly."); 
-
-require_once 'Formr/class.formr.php';
 
 function ContactUs() {
 
