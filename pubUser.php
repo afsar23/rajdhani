@@ -11,9 +11,22 @@ defined('ABSPATH') or die("Cannot access pages directly.");
 ######################################################################################
 
 
-// any files to include?
 
-function login($pg_atts) {
+function wtk_myaccount($pg_atts) {
+	
+	if ( is_user_logged_in() ) {
+		$default_fnc = 'profile';
+	} else {
+		$default_fnc = 'login';
+	}
+	$fnc = (isset($_REQUEST["fnc"])) ? $_REQUEST["fnc"] : $default_fnc;
+	$fnc = 'Afsar\\wtk\\wtk_' . $fnc;	
+	$fnc([ $pg_atts ]);	
+}	
+
+
+
+function wtk_login($pg_atts) {
 
 	$login  = (isset($_GET['login']) ) ? $_GET['login'] : 0;
 	if ( $login === "failed" ) {
@@ -53,76 +66,68 @@ function login($pg_atts) {
 	
 }
 
+
+function wtk_login_out($pg_atts) {
+	if (!is_user_logged_in()) {
+		login($pg_atts);
+	} else {
+		logout($pg_atts);
+	}
+}
+
+
+
+######################################################################################
+
 	
-function registration_form($pg_atts) {
+function wtk_register($pg_atts) {
 
 	$curr_user = wp_get_current_user();
 	
 	if ($curr_user->ID = 0) {
 		
-		echo "<h3>You are already logged in!</h3>";
+		echo "<h3>You are already registered and logged in!</h3>";
 		
 	} else {
-		?>
-		<!-- Form display card w/ options -->
-		<div class="card shadow">
-			<div class="card-body">
-				<div>
-				<?php
-				RegForm();
-				?>
-				</div>
-			</div>
-			<div class="card-footer">
-				<div>Please ensure all mandatory details are completed</div>
-			</div>
-		</div>
-		<?php
-	}
 
-}
+		$api_email_code = get_rest_url(null,"wtk/v1/email_verification_code");		// custom user registration end point
+		$api_url        = get_rest_url(null,"wtk/v1/register/?arg1=Y&arg2=No");		// custom user registration end point
+		$jsCallBack     = "postFormProcessing";
 
-function RegForm() {
+		//echo "<pre>".$api_url."</pre>";	
 
-	$api_email_code = get_rest_url(null,"wtk/v1/email_verification_code");		// custom user registration end point
-    $api_url        = get_rest_url(null,"wtk/v1/register/?arg1=Y&arg2=No");		// custom user registration end point
-	$jsCallBack     = "postFormProcessing";
-
-    //echo "<pre>".$api_url."</pre>";	
-
-	$user_login = "";
-	$user_email = "";
-	//$lst = SelectList("SELECT id, usergroup FROM ".prefix("usergroups")." ORDER BY seqno;");
-			
-	// registration form...
-	?>
-	
-	<div id="response"></diV>
-	
-	<form autocomplete="off" id='reg_form' action='javascript:;' onsubmit="submitForm(this,'<?=$api_url?>',<?=$jsCallBack?>);"> 
-
-		<div class="form-group">
-			<label for="user_name">User Name</label>
-			<input type="text" class="form-control" name="user_name" id="use_rname" placeholder="login name" required />
-		</div>
-
-		<div class="form-group">
-			<label for="email">Email</label>
-			<input type="email" class="form-control" name="email" id="email" value=" " required />
-			
-			<p>Click [<a href="javascript:;" id="email_verification_code" name="email_verification_code" onclick="EmailVerificationCode('<?=$api_email_code?>');">here</a>] to receive Verfication Code to input below.<br/> 
-			<label for="token_raw">Verification code</label>
-			<input type="text" id="token_raw" name="token_raw" value="" required />
+		$user_login = "";
+		$user_email = "";
+		//$lst = SelectList("SELECT id, usergroup FROM ".prefix("usergroups")." ORDER BY seqno;");
 				
-			<input type="hidden" id="token_hash" name="token_hash" value="" />
+		?>
+		<div>
+			<div id="response"></diV>
 		
-		</div>
+			<form autocomplete="off" id='reg_form' action='javascript:;' onsubmit="submitForm(this,'<?=$api_url?>',<?=$jsCallBack?>);"> 
 
-		<div class="form-group">
-			<label for="user_pass">Choose Password</label>
-			<input type="password" class="form-control" name="user_pass" id="user_pass" required placeholder="password" autocomplete="off" />
-		</div>
-		
+				<div class="form-group">
+					<label for="user_name">User Name</label>
+					<input type="text" class="form-control" name="user_name" id="use_rname" placeholder="login name" required />
+				</div>
+
+				<div class="form-group">
+					<label for="email">Email</label>
+					<input type="email" class="form-control" name="email" id="email" value=" " required />
+					
+					<p>Click [<a href="javascript:;" id="email_verification_code" name="email_verification_code" onclick="EmailVerificationCode('<?=$api_email_code?>');">here</a>] to receive Verfication Code to input below.<br/> 
+					<label for="token_raw">Verification code</label>
+					<input type="text" id="token_raw" name="token_raw" value="" required />
+						
+					<input type="hidden" id="token_hash" name="token_hash" value="" />
+				
+				</div>
+
+				<div class="form-group">
+					<label for="user_pass">Choose Password</label>
+					<input type="password" class="form-control" name="user_pass" id="user_pass" required placeholder="password" autocomplete="off" />
+				</div>
+				
 					<div class="form-group" style="display:none" >
 						<label for="user_group">User Group</label>
 						<select class="form-control" name="user_group" id="user_group" value="1" >
@@ -135,45 +140,30 @@ function RegForm() {
 					</div>					
 
 
-		<div class="form-group">
-			<label for="referral_code">Referral Code</label>
-			<input type="text" class="form-control" name="referral_code" id="referral_code" value="" required />
-		</div>
+				<div class="form-group">
+					<label for="referral_code">Referral Code</label>
+					<input type="text" class="form-control" name="referral_code" id="referral_code" value="" required />
+				</div>
 
+				<?php wp_nonce_field(wtkNonceKey(), '_wpnonce');?>
 
-		<?php 
-			wp_nonce_field(wtkNonceKey(), '_wpnonce');
-		?>
+				<button type='submit' class='btn btn-primary'>Register</button>
 
-		<button type='submit' class='btn btn-primary'>Register</button>
-
-	</form>
-	<?php
-
-} 
-
-function welcome() {
-
-	$current_user = wp_get_current_user();
-	if ( ($current_user instanceof \WP_User) ) {
-		echo "<blockquote>Welcome <strong>".esc_html( $current_user->display_name )."</strong></br/>";
-		echo "<p>Thank you for registering. Happy browsing!</p>";
-		echo "</blockquote>";
-	} else {
-		echo "<h3>Oops -  something went wrong with registration!</h3>";
+				</form>
+			</div>
+		<?php
 	}
+
 }
 
 
-function settings($pg_atts) {
+
+function wtk_settings($pg_atts) {
 	
 	echo "<p>Change settings and preferences here</>";
 }
 
-
-
-
-function forgot_password($pg_atts) {
+function wtk_forgot_password($pg_atts) {
 	
 	$curr_user = wp_get_current_user();
 		
@@ -191,11 +181,8 @@ function forgot_password($pg_atts) {
 			<label for="user_login">Login or Email</label>
 			<input type="text" class="form-control" name="login_or_email" id="login_or_email" value="" required />
 		</div>
-
 		
-		<?php 
-			wp_nonce_field(wtkNonceKey(), '_wpnonce');
-		?>
+		<?php wp_nonce_field(wtkNonceKey(), '_wpnonce'); ?>
 
 		<button type='submit' class='btn btn-primary'>Send Password Reset Link</button>
 
@@ -204,7 +191,7 @@ function forgot_password($pg_atts) {
 	
 }
 
-function reset_password() {
+function wtk_reset_password() {
 
     global $wtk;
 
@@ -246,7 +233,7 @@ function reset_password() {
 }
 	
 
-function profile($pg_atts) {	
+function wtk_profile($pg_atts) {	
 	echo "<p>Form to edit profile</p>";
 }
 

@@ -18,7 +18,7 @@ use Afsar\wtk;
  * Plugin Name:       [Rajdjhani]
  * Plugin URI:        wptoolkit.com
  * Description:       Bespoke plugin for Rajdhani Connections
- * Version:           0.0.5
+ * Version:           0.0.6
  * Author:            Mohammed Afsar
  * Author URI:        wptoolkit.com
  * License:           GPL-2.0+
@@ -34,6 +34,9 @@ require_once plugin_dir_path( __FILE__ ) . 'db_setup.php';
 
 require_once plugin_dir_path( __FILE__ ) . 'wtkFunctions.php';
 require_once plugin_dir_path( __FILE__ ) . 'clsDatabase.php';
+
+require_once plugin_dir_path( __FILE__ ) . 'CoreShortcodes.php';
+require_once plugin_dir_path( __FILE__ ) . 'CustomShortcodes.php';
 
 global $wtk;
 global $pdb;

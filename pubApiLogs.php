@@ -16,7 +16,7 @@ defined('ABSPATH') or die("Cannot access pages directly.");
 
 
 // invoked by short code wrapper wtk_maint_usergroups
-function ApiLogs() {
+function wtk_apilogs() {
 	
 	$api_url = get_rest_url(null,"wtk/v1/listdata"); 
 	echo '<a href="'.$api_url.'">'.$api_url.'</a>';

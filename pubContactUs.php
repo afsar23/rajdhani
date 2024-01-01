@@ -5,7 +5,7 @@ use Afsar\wtk;
 
 defined('ABSPATH') or die("Cannot access pages directly."); 
 
-function ContactUs() {
+function wtk_contactus() {
 
     global $app;
 
