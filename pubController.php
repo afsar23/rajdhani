@@ -113,18 +113,17 @@ function ImpersonateUser() {
 
 
 	
-//add_action('wp_footer','Afsar\wtk\wtk_footer');
+add_action('wp_footer','Afsar\wtk\wtk_footer');
 function wtk_footer() {
 
 	//example of using dash-icons in front-en
 	//echo '<h2><span class="dashicons dashicons-smiley"></span> A Cheerful Headline</h2>';
-
-	phpinfo();
+echo "<div>Is logged in: ". is_user_logged_in() . "</div>";
+	//phpinfo();
 	
 	//UserInfo();
 	echo '<h3>COOKIES</h3>';
 	echo wtk_printable($_COOKIE);
-
 
 		// get the the role object
 		//$role_object = get_role( "administrator" );

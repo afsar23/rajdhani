@@ -156,6 +156,17 @@ function wtk_register($pg_atts) {
 
 }
 
+function wtk_welcome() {
+
+	$current_user = wp_get_current_user();
+	if ( ($current_user instanceof \WP_User) ) {
+		echo "<blockquote>Welcome <strong>".esc_html( $current_user->display_name )."</strong></br/>";
+		echo "<p>Thank you for registering. Happy browsing!</p>";
+		echo "</blockquote>";
+	} else {
+		echo "<h3>Oops -  something went wrong with registration!</h3>";
+	}
+}
 
 
 function wtk_settings($pg_atts) {
@@ -232,6 +243,19 @@ function wtk_reset_password() {
 
 }
 	
+function wtk_pwd_changed_ok() {
+	
+	$current_user = wp_get_current_user();
+	if ( ($current_user instanceof \WP_User) ) {
+		
+		echo "<div>Is logged in: ". is_user_logged_in() . "</div>";
+		echo "<blockquote>Password successfully changed</blockquote>";
+	} else {
+		echo "<h3>Oops - something went wrong whilst resetting password!</h3>";
+	}	
+}
+
+
 
 function wtk_profile($pg_atts) {	
 	echo "<p>Form to edit profile</p>";
