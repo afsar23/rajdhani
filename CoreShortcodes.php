@@ -59,7 +59,12 @@ function wtk_HandleShortcode($pg_atts = [], $pg_content = null, $sc_tag = '') {
 
 	// execute the shortcode identified by the passed in tag
 	$fnc = 'Afsar\\wtk\\' . $sc_tag;	
-	$fnc([ $pg_atts ]);
+	
+	try {
+		$fnc([ $pg_atts ]);
+	} catch (\Throwable $e) {
+		echo "<blockquote>This feature has not yet been implemented!</blockquote>";
+	}
 	
 	$content = ob_get_clean(); // store buffered output content.
 
