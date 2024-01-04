@@ -573,7 +573,6 @@ function api_users_register(\WP_REST_Request $request = null) {
 		$parameters = array_merge($queryParams, $parameters);
 	}
 
-
 	$username = sanitize_text_field($parameters['user_name']) ;;
 	$email = sanitize_text_field($parameters['email']) ;;
 	$password = sanitize_text_field($parameters['user_pass']) ;	 
@@ -712,8 +711,7 @@ function updatepassword(\WP_REST_Request $request = null) {
 	global $wtk;
 	global $wpdb;
 	global $db;	
-	
-	
+		
 	$params = $request->get_params();
 	if (isset($_REQUEST['request'])) {				// w2ui sends postData in a request variable!
 		$params = array_merge(json_decode(stripslashes($_REQUEST['request']),true), $params);
@@ -726,9 +724,8 @@ function updatepassword(\WP_REST_Request $request = null) {
 	}
 	catch (\Throwable $e) {
 		// simply store the token validation results to allow uses cases to decide their own course of action
-		return [ "status"=> "error",  "message"    => "Failed to update password - invalid token" ];
+		return rest_ensure_response([ "status"=> "error",  "message"    => "Failed to update password - invalid token" ]);
 	}
-
 
 	// ok, we're good to update the password...
 	// insert query
@@ -751,22 +748,12 @@ function updatepassword(\WP_REST_Request $request = null) {
 
 	// execute the query, also check if query was successful
 	
-	
 	$result = $stmt->execute();
 
 	if($result) {
-		$response = [	"status"		=> "success",
-							"message"		=> "Password updated successfully",
-								"redirect" => home_url("/my-account?fnc=pwd_changed_ok")
-						];
-			// auto-login after password change...					
-			wp_signon(["user_login"=>$user["user_login"], "user_password"=>$params["user_pass"],"remember"=>true]);		
-
-
+		$response = [ "status" => "success", "message" => "Password updated successfully" ];
 	} else {
-		$response = [	"status"		=> "error",
-							"message"		=> "Failed to update password"
-						];
+		$response = ["status" => "error", "message"	=> "Failed to update password"];
 	}
 
 	$stmt = null;	

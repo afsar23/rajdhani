@@ -210,7 +210,9 @@ function wtk_reset_password() {
     $jsCallBack     = "postFormProcessing";
 
 	$JWTToken = (isset($_REQUEST["token"])) ? $_REQUEST["token"] : htmlspecialchars($_COOKIE["jwt_token"]);
-	//echo "<div>".$JWTToken."</div>";
+	echo "<div>".$JWTToken."</div>";
+
+echo "<div>Is user logged in: ".is_user_logged_in()."</div>";
 
 	$tokenvalidation = JWTTokenValidation($JWTToken);
 	//echo printable($tokenvalidation);
@@ -303,7 +305,7 @@ function postFormProcessing(response) {
 	//alert("here!");
 	//$j('#response').html(JSON.stringify(response));
 	//$j('#response').html("<div class='alert alert-danger'>"+response.message+"</div>");
-	///return;
+	//return;
     if (response.status=="success") {
         // do something , eg redirect to login page?
         $j('#response').html("<div class='alert alert-success'>"+response.message+"</div>");

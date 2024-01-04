@@ -84,6 +84,22 @@ function wtkInit() {
 	
 	global $wtkContext;
 	$wtkContext = wtkContext();
+
+			// patch for ensuring user is fully logged in and is_user_logged_in() will return true
+			// needed after updating password via front-end where password hash cookies become invalid
+			// and is_user_logged_in() returns false 
+			if (!is_user_logged_in()) {
+				try {    
+					// actually may be able to use wp own current user ....?????
+					$jwt = (isset($_COOKIE["jwt_token"])) ? htmlspecialchars($_COOKIE["jwt_token"]) : "";
+					$user = GetUserFromToken($jwt);
+					wp_set_current_user($user["ID"]);
+					wp_set_auth_cookie($user["ID"],true);
+				}
+				catch (\Throwable $e) {
+					// do nothing
+				}				
+			}
 	
 	switch (wtkContext()) {
 		case "admin":
@@ -96,7 +112,7 @@ function wtkInit() {
 			require_once plugin_dir_path( __FILE__ ) . 'apiController.php';
 			break;
 
-		case "public":
+		case "public":				
 			require_once plugin_dir_path( __FILE__ ) . 'pubController.php';
 			break;		
 		
