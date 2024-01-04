@@ -48,22 +48,25 @@ function wtk_login($pg_atts) {
          'remember' => true
     );
 	
-	?>
-		<div class="card shadow">
-			<div class="card-body">
-				<div>
-				<?php
-				wp_login_form( $args );
-				?>
+	if (!is_user_logged_in()) {
+		?>
+			<div class="card shadow">
+				<div class="card-body">
+					<div>
+					<?php
+					wp_login_form( $args );
+					?>
+					</div>
+				</div>
+				<div class="card-footer">
+					<div><a href="<?php echo home_url().'/my-account?fnc=forgot_password';?>">Forgot Password?</a></div>
+					<div>Don't have an account? <a href="<?php echo home_url().'/my-account?fnc=register';?>">Register</a></div>
 				</div>
 			</div>
-			<div class="card-footer">
-				<div><a href="<?php echo home_url().'/my-account?fnc=forgot_password';?>">Forgot Password?</a></div>
-				<div>Don't have an account? <a href="<?php echo home_url().'/my-account?fnc=register';?>">Register</a></div>
-			</div>
-		</div>
-	<?php
-	
+		<?php
+	} else {
+		echo "<h4>You are already logged in!</h4>";
+	}
 }
 
 
