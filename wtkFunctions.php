@@ -77,6 +77,9 @@ add_action( 'wp_logout', 'Afsar\wtk\after_logout' );
 function after_logout() {
 
 	// remove jwt cookie after the normal wp logout
+	wp_destroy_current_session();
+	wp_clear_auth_cookie();
+	wp_set_current_user( 0 );
 	remove_jwt_cookie();
 	
 	$login_page  = home_url( '/my-account?fnc=login' );
@@ -374,6 +377,11 @@ function GetSetDebugInfo($valuetoset=null,$tag = "DEBUG") {
 	} else {
 		return $this->printable($this->debug_info);
 	}
+}
+
+function getCurrentUrl() {
+    $protocol = is_ssl() ? 'https://' : 'http://';
+    return ($protocol) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 }
 
 

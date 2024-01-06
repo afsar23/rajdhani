@@ -65,7 +65,7 @@ function wtk_login($pg_atts) {
 			</div>
 		<?php
 	} else {
-		echo "<h4>You are already logged in!</h4>";
+		echo "<h3>You are already logged in!</h4>";
 	}
 }
 
@@ -213,10 +213,7 @@ function wtk_reset_password() {
     $jsCallBack     = "postFormProcessing";
 
 	$JWTToken = (isset($_REQUEST["token"])) ? $_REQUEST["token"] : htmlspecialchars($_COOKIE["jwt_token"]);
-	echo "<div>".$JWTToken."</div>";
-
-echo "<div>Is user logged in: ".is_user_logged_in()."</div>";
-
+	
 	$tokenvalidation = JWTTokenValidation($JWTToken);
 	//echo printable($tokenvalidation);
 
@@ -250,10 +247,7 @@ echo "<div>Is user logged in: ".is_user_logged_in()."</div>";
 	
 function wtk_pwd_changed_ok() {
 	
-	$current_user = wp_get_current_user();
-	if ( ($current_user instanceof \WP_User) ) {
-		
-		echo "<div>Is logged in: ". is_user_logged_in() . "</div>";
+	if ( is_user_logged_in() ) {		
 		echo "<blockquote>Password successfully changed</blockquote>";
 	} else {
 		echo "<h3>Oops - something went wrong whilst resetting password!</h3>";
@@ -311,9 +305,10 @@ function postFormProcessing(response) {
 	//return;
     if (response.status=="success") {
         // do something , eg redirect to login page?
-        $j('#response').html("<div class='alert alert-success'>"+response.message+"</div>");
-		if (response.hasOwnProperty('redirect')) {
+        if (response.hasOwnProperty('redirect')) {
 			location.href = response.redirect;
+		} else {
+			$j('#response').html("<div class='alert alert-success'>"+response.message+"</div>");
 		}
     } else {
         $j('#response').html("<div class='alert alert-danger'>"+response.message+"</div>");

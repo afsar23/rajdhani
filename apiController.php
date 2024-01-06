@@ -751,7 +751,9 @@ function updatepassword(\WP_REST_Request $request = null) {
 	$result = $stmt->execute();
 
 	if($result) {
-		$response = [ "status" => "success", "message" => "Password updated successfully" ];
+		$response = [ "status" => "success", "message" => "Password updated successfully",
+								"redirect" => home_url("/my-account?fnc=pwd_changed_ok") ];
+		wp_signon(["user_login"=>$user["user_login"], "user_password"=>$params["user_pass"],"remember"=>true]);
 	} else {
 		$response = ["status" => "error", "message"	=> "Failed to update password"];
 	}

@@ -50,6 +50,9 @@ $db = $pdb->getConnection();
 CreateOrUpdateDbSchema();
 //register_activation_hook( __FILE__, 'Afsar\wtk\CreateOrUpdateDbSchema' );
 
+
+
+
 wtk_create_plugin_menus();
 
 
@@ -85,21 +88,26 @@ function wtkInit() {
 	global $wtkContext;
 	$wtkContext = wtkContext();
 
+		####################
 			// patch for ensuring user is fully logged in and is_user_logged_in() will return true
 			// needed after updating password via front-end where password hash cookies become invalid
 			// and is_user_logged_in() returns false 
-			if (!is_user_logged_in()) {
+			if (!is_user_logged_in() AND $wtkContext<>"wprest") {
 				try {    
-					// actually may be able to use wp own current user ....?????
 					$jwt = (isset($_COOKIE["jwt_token"])) ? htmlspecialchars($_COOKIE["jwt_token"]) : "";
 					$user = GetUserFromToken($jwt);
-					wp_set_current_user($user["ID"]);
-					wp_set_auth_cookie($user["ID"],true);
+					$uid = $user["ID"];
+					wp_set_current_user($uid);
+					wp_set_auth_cookie($uid,true);
+					wp_redirect(getCurrentUrl());
+					exit;
 				}
 				catch (\Throwable $e) {
 					// do nothing
 				}				
 			}
+
+
 	
 	switch (wtkContext()) {
 		case "admin":

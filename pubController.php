@@ -122,6 +122,7 @@ echo "<div>Is logged in: ". is_user_logged_in() . "</div>";
 	//phpinfo();
 	
 	//UserInfo();
+	echo "Current URL = '". getCurrentUrl()."'<br/>";
 	echo '<h3>COOKIES</h3>';
 	echo wtk_printable($_COOKIE);
 
