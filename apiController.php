@@ -142,7 +142,7 @@ function wtk_api_permissions_check(\WP_REST_Request $request = null) {
 			$JWTToken = getBearerToken();
 			$tokenvalidation = JWTTokenValidation($JWTToken);
 			if ( $tokenvalidation["status"] =="error" ) {
-				$api_response = rest_ensure_response(["status"=>"error","message"=>"Invalid token. Permission denied!"],200);
+				$api_response = ["status"=>"error","message"=>"Invalid token. Permission denied!!!!!!!!!!!!!!!!"];
 			}
 			break;
 		case "DENY":		// deny access as the wtk api hasn't been assigned access type, so the default is to deny! 
@@ -316,6 +316,20 @@ function api_after_callback( $api_response, $handler, \WP_REST_Request $request 
         if ($id==0) {
             return;
         }
+		
+		if (isset($api_response["records"])) {
+			$api_response["records_count"] = count($api_response["records"]);
+			if (count($api_response["records"])>2) {
+				$api_response["records"] = "TESTING"; //array_slice($api_response["records"],0,2);
+			}
+		}
+		if (isset($api_response["data"])) {
+			$api_response["data_count"] = count($api_response["data"]);
+			if (count($api_response["data"])>2) {
+				$api_response["data"] = "TEST"; //array_slice($api_response["data"],0,2);
+			}
+		}
+			
 
         $query = "UPDATE " . prefix("apicalls") . "
             SET
@@ -334,6 +348,7 @@ function api_after_callback( $api_response, $handler, \WP_REST_Request $request 
 			$api_response = stripslashes(json_encode($api_response));
 		}
 		
+	
         $stmt->bindParam(':id', $id);
         $stmt->bindParam(':api_response', $api_response);
         
@@ -382,7 +397,6 @@ function testapi(\WP_REST_Request $request = null) {
 	//echo printable($tokenvalidation);
 	if ($tokenvalidation["status"] =="error") {
 		$response = ["status"=>"error","message"=>"Invalid token. Permission denied!"];
-		//return rest_ensure_response($response,200); 
 	}
 	
 	$api_request = [
@@ -409,7 +423,7 @@ function testapi(\WP_REST_Request $request = null) {
 			$result = $stmt->execute();
 			$stmt = null;
 	
-	return rest_ensure_response($api_response,200);
+	return $api_response;
 }
 
 
@@ -434,13 +448,14 @@ function api_listdata(\WP_REST_Request $request = null) {
 		$params = array_merge(json_decode(stripslashes($_REQUEST['request']),true), $params);
 		unset($params['request']);
 	}
+
 	$params = stripslashes_deep($params);
 
-	$limit 		= (isset($params["limit"])) 	? $params["limit"]			: 0;
+	$limit 		= (isset($params["limit"])) 	? $params["limit"]			: 999999999999;
 	$offset 	= (isset($params["offset"])) 	? $params["offset"]			: 0;
-	$table 		= (isset($params["table"])) 	? prefix($params["table"])	: "";
-	
-	// dela with tabulator request...
+	$table 		= (isset($params["table"])) 	? $params["table"]			: $wpdb->prefix."options";
+		
+	// deal with tabulator request...
 	if (isset($params["size"])) {	
 		$limit = $params["size"];
 		$offset = $params["size"] * ($params["page"]-1);
@@ -451,7 +466,7 @@ function api_listdata(\WP_REST_Request $request = null) {
 		if (isset($params['action'])) {
 			if ($params['action']=="delete") {
 				$sql = "DELETE FROM ".$table." WHERE id IN (".implode(', ', $params["id"]).")";
-				//return rest_ensure_response(["status"=>"error","message"=>$sql],200);
+				//return return ["status"=>"error","message"=>$sql];
 				$stmt = $db->prepare( $sql );
 				$stmt->execute();
 			}
@@ -468,13 +483,6 @@ function api_listdata(\WP_REST_Request $request = null) {
 		if (isset($params['sort'])) {
 			$sql .= " ORDER BY ".implode(", ", array_map(function($item) { return $item["field"]." ".$item["direction"]; }, $params['sort']) );
 		}
-				
-			// first get total records without the limit/OFFSET
-			$stmt = $db->prepare( "SELECT COUNT(1) total FROM (".$sql.") qry" );
-			$stmt->execute();
-			$datarows	=	$stmt->fetchAll(PDO::FETCH_ASSOC);
-			$total = $datarows[0]["total"];
-			$stmt = null;		
 		
 		//now return data....
 		$sql .= " LIMIT :limit OFFSET :offset";
@@ -488,14 +496,17 @@ function api_listdata(\WP_REST_Request $request = null) {
 		$datarows	=	$stmt->fetchAll(PDO::FETCH_ASSOC);
 		$stmt = null;
 
+		$total = count($datarows);
+		
 		$response = 
 			[
 				"status"=>"success",
 				"message"=>"Data retrieved succesfully",
+				"sql"=>$sql,
 				"total"=>$total,  // can be -1 (or unset) to indicate that total number is unknown
 					// tabulator expects these...
 					"last_row"=>$total,
-					"last_page"=>intdiv($total,$limit)+1,
+					//"last_page"=>intdiv($total,$limit)+1,
 					"data"=>stripslashes_deep($datarows),
 				"records" => stripslashes_deep($datarows)
 			];
@@ -503,7 +514,7 @@ function api_listdata(\WP_REST_Request $request = null) {
 		$response = [ "status"=> "error",  "message"    => $e->getMessage() ];
 	}
 	
-	return rest_ensure_response($response,200);
+	return $response;
 }
 
 
@@ -611,7 +622,7 @@ function api_users_register(\WP_REST_Request $request = null) {
 		}
 	}
 	
-	return rest_ensure_response($response,200);
+	return $response;
 }
 
 function api_email_verification_code(\WP_REST_Request $request = null) {
@@ -645,7 +656,7 @@ function api_email_verification_code(\WP_REST_Request $request = null) {
 			$response = ["status"=>$status, "message"=>$msg];
 		}
 	}	
-	return rest_ensure_response($response,200);
+	return $response;
 }
 
 
@@ -664,9 +675,8 @@ function send_reset_password_link(\WP_REST_Request $request = null) {
 
 	$login_or_email = (isset($parameters["login_or_email"])) ? $parameters["login_or_email"] : "";
 
-		//return rest_ensure_response($parameters,200);
-	
-	
+		//return $parameters;
+		
 	
 	$userdata = get_user_by('email', $login_or_email);
     if (empty($userdata)) {
@@ -701,7 +711,7 @@ function send_reset_password_link(\WP_REST_Request $request = null) {
 		$response = ["status"=>"error", "message" => "User not found"];
 	}
 
-	return rest_ensure_response($response,200);
+	return $response;
 	
 }
 
@@ -724,7 +734,7 @@ function updatepassword(\WP_REST_Request $request = null) {
 	}
 	catch (\Throwable $e) {
 		// simply store the token validation results to allow uses cases to decide their own course of action
-		return rest_ensure_response([ "status"=> "error",  "message"    => "Failed to update password - invalid token" ]);
+		return [ "status"=> "error",  "message"    => "Failed to update password - invalid token" ];
 	}
 
 	// ok, we're good to update the password...
@@ -760,7 +770,7 @@ function updatepassword(\WP_REST_Request $request = null) {
 
 	$stmt = null;	
 
-	return rest_ensure_response($response,200);
+	return $response;
 
 }
 
@@ -892,7 +902,7 @@ function api_contactus(\WP_REST_Request $request = null) {
 	}
 
 	//return $response_data;
-	return rest_ensure_response($response,200);
+	return $response;
 
 }	
 

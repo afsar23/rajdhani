@@ -16,8 +16,34 @@ defined('ABSPATH') or die("Cannot access pages directly.");
 
 // invoked by shortcode in pubControler script
 function wtk_viewanytable() {
+		
+	$table  = (isset($_GET['table']) ) ? $_GET['table'] : "wp_wtk_contactus";
+	$grd_url = get_rest_url(null,"wtk/v1/listdata?table=".$table);
+
+	$user_login = "";
+	$user_email = "";
+	$sql = "SELECT TABLE_NAME 
+			FROM INFORMATION_SCHEMA.TABLES
+			WHERE table_schema = '". \DB_NAME. "'
+			ORDER BY TABLE_NAME";
+	$lst = sqlSelect($sql);	
 	
-	$grd_url = get_rest_url(null,"wtk/v1/listdata?table=masajid"); 
+	?>
+	<div>		
+		<form> 			
+			<label for="tabname">User Group</label>
+			<select name="tab_name" id="tabname" value=$table >
+				<?php
+				foreach($lst as $row):
+					$selected = ($row['TABLE_NAME'] == $table) ? "selected" : ""; 
+					echo '<option value="'.$row['TABLE_NAME'].' ".$selected>'.$row['TABLE_NAME'].'</option>'; //close your tags!!
+				endforeach;
+				?>
+			</select>
+		</form>
+	</div>
+	<?php
+
 	echo '		
 		<div id="grdgeneric" style="width: 100%; height: 550px;"></div>
 		';
@@ -34,7 +60,7 @@ function wtk_viewanytable() {
 			
 			var cfg = {  
 			
-				name	: 'grd_usergroups', 
+				name	: 'grdgeneric', 
 				//method	: 'GET',		// for load once
 				method	: 'POST',		// for dynamic server side load/refresh
 				header  : '<b>Manage User Groups</b>',

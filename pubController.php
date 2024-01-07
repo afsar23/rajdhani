@@ -118,10 +118,10 @@ function wtk_footer() {
 
 	//example of using dash-icons in front-en
 	//echo '<h2><span class="dashicons dashicons-smiley"></span> A Cheerful Headline</h2>';
-echo "<div>Is logged in: ". is_user_logged_in() . "</div>";
+	//echo "<div>Is logged in: ". is_user_logged_in() . "</div>";
 	//phpinfo();
 	
-	//UserInfo();
+	UserInfo();
 	echo "Current URL = '". getCurrentUrl()."'<br/>";
 	echo '<h3>COOKIES</h3>';
 	echo wtk_printable($_COOKIE);
@@ -151,8 +151,9 @@ function UserInfo() {
 		$user = new \WP_User( 0 );
 		$user->init( new \stdClass() );
 	}
-	
-	echo printable($user);
+	echo "USER INFO<br/>";
+	echo wtk_printable($user);
+	echo "<hr/>";
 	
 }
 	

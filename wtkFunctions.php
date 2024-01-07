@@ -589,7 +589,7 @@ function wtk_menu_items( $menu_name ){
 				}
 			
 			break;
-			
+
 		case "WTK_User_Menu":	
 			if ( is_user_logged_in() ) {
 				$items[] = wtk_custom_nav_menu_item( 'Profile', 		home_url().'/my-account?fnc=profile',			1,0 ); 						
@@ -601,13 +601,21 @@ function wtk_menu_items( $menu_name ){
 				$items[] = wtk_custom_nav_menu_item( 'Register', 		home_url().'/my-account?fnc=register',		2,0 );	
 				$items[] = wtk_custom_nav_menu_item( 'Forgot Password', home_url().'/my-account?fnc=forgot_password',	3,0 );
 			}
-			break;				
+			break;			
 
 		case "WTK_Legal_Menu":				
 			$items[] = wtk_custom_nav_menu_item( 'Privacy Policy', home_url().'/privacy-policy', 	3,0 ); 
 			$items[] = wtk_custom_nav_menu_item( 'Terms & Conditions', home_url().'/terms-conditions',  		4,0 ); 
 			$items[] = wtk_custom_nav_menu_item( 'Cookie Policy', 	home_url().'/cookie-policy', 	6,0 ); 
 			break;				
+
+		case "WTK_Admin_Menu":	
+			if ( current_user_can( 'manage_options' ) ) {
+				$items[] = wtk_custom_nav_menu_item( 'View Table', 		home_url().'/view-table',			1,0 ); 						
+				$items[] = wtk_custom_nav_menu_item( 'API Logs', 		home_url().'/api-logs',			2,0 ); 						
+			}
+			break;	
+
 	}			
 	
 return $items;
@@ -618,7 +626,7 @@ function wtk_create_plugin_menus() {
 	
 	// Create plugin menu stubs
 	// actual menu items would be added dynamically through the wp_get_nav_menu_items filter
-	$menu_names = array("WTK_Main_Menu","WTK_User_Menu","WTK_Legal_Menu"); 
+	$menu_names = array("WTK_Main_Menu","WTK_User_Menu","WTK_Legal_Menu","WTK_Admin_Menu"); 
 			
 	foreach($menu_names as $menu_name) {
 		if (!wp_get_nav_menu_object( $menu_name ))	{ 
@@ -634,7 +642,7 @@ function assign_menu_locations() {
 	
 	if(!empty($locations)) { 
 
-		$menu_names = array("WTK_Main_Menu","WTK_User_Menu","WTK_Legal_Menu"); 
+		$menu_names = array("WTK_Main_Menu","WTK_User_Menu","WTK_Legal_Menu", "WTK_Admin_Menu"); 
 		$m = 0;
 		$newloc = [];
 		foreach($locations as $k=>$v) { 
@@ -663,6 +671,29 @@ function SelectList($sql) {
 	return $data; //array_flip($data);
 	
 }	
+
+
+    function sqlSelect($sql,$param=array()){
+
+		global $db;
+		$stmt = $db->prepare($sql);
+		try {
+			if(!empty($param) && is_array($param)){
+				$stmt->execute($param);
+			} else {
+				$stmt->execute();
+			}
+			
+		} catch(PDOException $e) {
+			//$msg = $e->getMessage();
+			switch($e->getCode()){
+				//case 23000: $msg = "Name already exists";  break;
+				default: $msg = $e->getMessage(); break;   
+			}
+			die($msg);
+		}
+		return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
 ####################################################### CUSTOM POST TYPES ###############################################
 

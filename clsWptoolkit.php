@@ -91,6 +91,8 @@ function InitSitePages() {
 	$pages["Terms & Conditions"] = "This page contains all the boring legal stuff";
 	$pages["Cookie Policy"] = "What cookies are and how they help improve user experience";
 	$pages["My Account"] = "[wtk_myaccount]";
+	$pages["View Table"] = "[wtk_viewanytable]";
+	$pages["API Logs"] = "[wtk_apilogs]";
 
 	foreach ($pages as $title => $content) {
 

@@ -108,7 +108,6 @@ class Database {
 		return $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
 	}
 	
-	
 
 	// fetch single record object
 	public function get_row($sql,$param=array()) {

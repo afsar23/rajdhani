@@ -18,7 +18,7 @@ defined('ABSPATH') or die("Cannot access pages directly.");
 // invoked by short code wrapper wtk_maint_usergroups
 function wtk_apilogs() {
 	
-	$api_url = get_rest_url(null,"wtk/v1/listdata"); 
+	$api_url = get_rest_url(null,"wtk/v1/listdata?table=".prefix("apicalls")); 
 	echo '<a href="'.$api_url.'">'.$api_url.'</a>';
 	
 	?>	
@@ -49,7 +49,7 @@ function wtk_apilogs() {
 				"Authorization" 	: 'Bearer ' + getCookie('jwt_token'),
 				//"X-WP-Nonce"		: wpApiSettings.nonce,
 			},
-			postData: {table: "apicalls", filter: "api_response is not null"},
+			//postData: {table: "apicalls", filter: "api_response is not null"},
 			limit	: 5,
 			autoload: true,
 			recid	: 'id',
