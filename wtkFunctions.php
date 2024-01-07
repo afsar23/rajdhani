@@ -627,7 +627,7 @@ function wtk_create_plugin_menus() {
 	// Create plugin menu stubs
 	// actual menu items would be added dynamically through the wp_get_nav_menu_items filter
 	$menu_names = array("WTK_Main_Menu","WTK_User_Menu","WTK_Legal_Menu","WTK_Admin_Menu"); 
-			
+	
 	foreach($menu_names as $menu_name) {
 		if (!wp_get_nav_menu_object( $menu_name ))	{ 
 			$menu_id = wp_create_nav_menu($menu_name);

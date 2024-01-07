@@ -18,9 +18,6 @@ defined('ABSPATH') or die("Cannot access pages directly.");
 // invoked by short code wrapper wtk_maint_usergroups
 function wtk_apilogs() {
 	
-	$api_url = get_rest_url(null,"wtk/v1/listdata?table=".prefix("apicalls")); 
-	echo '<a href="'.$api_url.'">'.$api_url.'</a>';
-	
 	?>	
 		<div id="apilogs" style="border:1px solid red; width:100%;height: 500px;"></div>
 		<div id="afsardebug" xstyle="border:1px solid red; width:100%;"></div>
@@ -43,14 +40,14 @@ function wtk_apilogs() {
 			name: 'grid',
 			method	: 'POST',		// for dynamic server side load/refresh
 			//header  : '<b>Manage User Groups</b>',
-			url     : '<?php echo get_rest_url(null,"wtk/v1/listdata"); ?>',		// comment out if loading once from server
+			url     : '<?php echo get_rest_url(null,"wtk/v1/listdata?table=".prefix("apicalls")); ?>',		// comment out if loading once from server
 			httpHeaders: {
 				"Content-Type"		: "application/json",
 				"Authorization" 	: 'Bearer ' + getCookie('jwt_token'),
 				//"X-WP-Nonce"		: wpApiSettings.nonce,
 			},
 			//postData: {table: "apicalls", filter: "api_response is not null"},
-			limit	: 5,
+			limit	: 20005,
 			autoload: true,
 			recid	: 'id',
 			show: {

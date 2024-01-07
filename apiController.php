@@ -95,7 +95,7 @@ function api_register_routes($request = null) {
 		'methods'  => \WP_REST_Server::ALLMETHODS ,
 		'callback' => 'Afsar\wtk\api_listdata',		// defined in separate script file
 		'permission_callback' => 'Afsar\wtk\wtk_api_permissions_check',	
-		'access_type'=>'LOGGED_IN'	
+		'access_type'=>'PUBLIC'	//'LOGGED_IN'	
 		]
     ) );	
 
@@ -236,6 +236,8 @@ function api_after_callback( $api_response, $handler, \WP_REST_Request $request 
 		}
 	}	
 
+	//$api_response["cookies"] = $_COOKIE;
+	
 	LogApiEnd($wtk->api_call_id ,$api_response); 
 				
 	return $api_response;
