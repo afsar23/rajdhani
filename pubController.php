@@ -113,7 +113,7 @@ function ImpersonateUser() {
 
 
 	
-add_action('wp_footer','Afsar\wtk\wtk_footer');
+//add_action('wp_footer','Afsar\wtk\wtk_footer');
 function wtk_footer() {
 
 	//example of using dash-icons in front-en

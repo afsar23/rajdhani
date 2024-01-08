@@ -322,13 +322,13 @@ function api_after_callback( $api_response, $handler, \WP_REST_Request $request 
 		if (isset($api_response["records"])) {
 			$api_response["records_count"] = count($api_response["records"]);
 			if (count($api_response["records"])>2) {
-				$api_response["records"] = "TESTING"; //array_slice($api_response["records"],0,2);
+				$api_response["records"] = array_slice($api_response["records"],0,2);
 			}
 		}
 		if (isset($api_response["data"])) {
 			$api_response["data_count"] = count($api_response["data"]);
 			if (count($api_response["data"])>2) {
-				$api_response["data"] = "TEST"; //array_slice($api_response["data"],0,2);
+				$api_response["data"] = array_slice($api_response["data"],0,2);
 			}
 		}
 			
