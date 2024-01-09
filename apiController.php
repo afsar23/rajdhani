@@ -95,7 +95,7 @@ function api_register_routes($request = null) {
 		'methods'  => \WP_REST_Server::ALLMETHODS ,
 		'callback' => 'Afsar\wtk\api_listdata',		// defined in separate script file
 		'permission_callback' => 'Afsar\wtk\wtk_api_permissions_check',	
-		'access_type'=>'PUBLIC'	//'LOGGED_IN'	
+		'access_type'=>'LOGGED_IN'	
 		]
     ) );	
 
