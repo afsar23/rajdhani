@@ -39,7 +39,8 @@ function api_register_routes($request = null) {
 		'methods'  => \WP_REST_Server::ALLMETHODS ,
 		'callback' => 'Afsar\wtk\testapi',
 		'permission_callback' => 'Afsar\wtk\wtk_api_permissions_check',
-		'access_type'=>'LOGGED_IN'
+		'access_type'=>'LOGGED_IN',
+		'capability' => 'manage_options'
 		]
 	) );	
 	
@@ -95,7 +96,8 @@ function api_register_routes($request = null) {
 		'methods'  => \WP_REST_Server::ALLMETHODS ,
 		'callback' => 'Afsar\wtk\api_listdata',		// defined in separate script file
 		'permission_callback' => 'Afsar\wtk\wtk_api_permissions_check',	
-		'access_type'=>'LOGGED_IN'	
+		'access_type'=>'LOGGED_IN',
+		'capability' => 'manage_options'
 		]
     ) );	
 
@@ -118,7 +120,7 @@ function api_register_routes($request = null) {
  *
  */
 function wtk_api_permissions_check(\WP_REST_Request $request = null) {
-	
+
 	$params = $request->get_params();
 	if (isset($_REQUEST['request'])) {				// w2ui sends postData in a request variable!
 		$params = array_merge(json_decode(stripslashes($_REQUEST['request']),true), $params);
@@ -128,6 +130,8 @@ function wtk_api_permissions_check(\WP_REST_Request $request = null) {
 
 	$this_route = $request->get_attributes();
 	$access_type = (isset($this_route['access_type'])) ? $this_route['access_type']: "DENY";			
+	$capability = (isset($this_route['capability'])) ? $this_route['capability']: "read";			
+
 	//return ["status"=>"error","message"=>$this_route];
 
 	switch($access_type) {
@@ -139,10 +143,15 @@ function wtk_api_permissions_check(\WP_REST_Request $request = null) {
 			}
 			break;
 		case "LOGGED_IN":				// define different roles/capabailities
+			/*
 			$JWTToken = getBearerToken();
 			$tokenvalidation = JWTTokenValidation($JWTToken);
 			if ( $tokenvalidation["status"] =="error" ) {
-				$api_response = ["status"=>"error","message"=>"Invalid token. Permission denied!!!!!!!!!!!!!!!!"];
+				$api_response = ["status"=>"error","message"=>"Invalid token. Permission denied!"];
+			}
+			*/
+			if (!current_user_can($capability)) {
+				$api_response = ["status"=>"error","message"=>"Insufficient permission to access endpoint"];
 			}
 			break;
 		case "DENY":		// deny access as the wtk api hasn't been assigned access type, so the default is to deny! 
@@ -204,8 +213,8 @@ function api_before_callback( $response, $handler, \WP_REST_Request $request ) {
 	$uid = (isset($tokenvalidation["userinfo"])) ? $tokenvalidation["userinfo"]["ID"] : 0;
 	$current_user = wp_set_current_user($uid);
     
-		//$api_user = ["user_id"=>$current_user->ID,"user_login"=>$current_user->user_login, "user_name"=>$current_user->display_name];
-		$api_user = $current_user;
+		$api_user = ["user_id"=>$current_user->ID,"user_login"=>$current_user->user_login, "user_name"=>$current_user->display_name];
+		//$api_user = $current_user;
 		
 	global $wtk;
 

@@ -89,27 +89,30 @@ function wtk_viewanytable() {
 						searchAll 	   : false       // hides 'All Fields' option in the search dropdown					
 					},
 					onLoad : function(event) {
-						if (event.detail.data.total == 0 ) {
-							this.records = [ {data_col: 'No data'} ];
-							this.columns = [ { field: 'data_col', text: 'Data' } ];
-						} else {
-							rec = event.detail.data.records[0];
-							i=0;
-							cols = []
-							for(var fld in rec){		// iterate through the properties of the rec object
-								if (i==0) {
-									cols[i] = {"field": fld, "text": fld, 
-										info: {
-											render: (rec, ind, col_ind) => { return prettifyJSON(JSON.parse(JSON.stringify(rec))) }
-										}};							
-								} else {
-									cols[i] = {"field": fld, "text": fld, sortable:true};
-								} 
-								i++;
-							}
-							this.columns = cols;
-						}					
-					}
+						console.log(event);
+						if (event.detail.data.status=="success") {
+							if (event.detail.data.total == 0 ) {
+								this.records = [ {data_col: 'No data'} ];
+								this.columns = [ { field: 'data_col', text: 'Data' } ];
+							} else {
+								rec = event.detail.data.records[0];
+								i=0;
+								cols = []
+								for(var fld in rec){		// iterate through the properties of the rec object
+									if (i==0) {
+										cols[i] = {"field": fld, "text": fld, 
+											info: {
+												render: (rec, ind, col_ind) => { return prettifyJSON(JSON.parse(JSON.stringify(rec))) }
+											}};							
+									} else {
+										cols[i] = {"field": fld, "text": fld, sortable:true};
+									} 
+									i++;
+								}
+								this.columns = cols;
+							}		
+						}
+					}				
 				};
 
 				return cfg
