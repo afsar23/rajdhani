@@ -27,6 +27,7 @@ add_shortcode( 'wtk_profile', 				'Afsar\wtk\wtk_HandleShortcode' );
 
 add_shortcode( 'wtk_contactus', 			'Afsar\wtk\wtk_HandleShortcode' );
 add_shortcode( 'wtk_viewanytable', 			'Afsar\wtk\wtk_HandleShortcode' );
+add_shortcode( 'wtk_infinitescroll', 		'Afsar\wtk\wtk_HandleShortcode' );
 add_shortcode( 'wtk_apilogs', 				'Afsar\wtk\wtk_HandleShortcode' );
 
 //add_shortcode( 'wtk_<short_code_name>', 	'Afsar\wtk\wtk_HandleShortcode' );
@@ -52,6 +53,7 @@ function wtk_HandleShortcode($pg_atts = [], $pg_content = null, $sc_tag = '') {
 		case "wtk_contactus": 				require_once plugin_dir_path( __FILE__ ) . 'pubContactUs.php';		break;
 		
 		case "wtk_viewanytable": 			require_once plugin_dir_path( __FILE__ ) . 'pubViewAnyTable.php';	break;
+		case "wtk_infinitescroll": 			require_once plugin_dir_path( __FILE__ ) . 'pubInfiniteScroll.php';		break;
 
 		case "wtk_apilogs": 				require_once plugin_dir_path( __FILE__ ) . 'pubApiLogs.php';		break;
 

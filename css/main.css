@@ -4,12 +4,10 @@
 *
 */
 
-
 html.noscroll 	{
 	background-color:yellow; 
 	overflow: hidden !important;
 	}
-
 
 .breadcrumb {
 	padding: 8px 15px;

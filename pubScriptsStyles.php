@@ -65,9 +65,6 @@ defined('ABSPATH') or die("Cannot access pages directly.");
 	wp_register_style('login_reg_pwd_css', plugin_dir_url( __FILE__ ).'css/main.css',[],filemtime($pluginpath.'css/login_reg_pwd.css'));
 	wp_enqueue_style('login_reg_pwd_css');  
 	
-	//wp_register_style('generic_form_css', plugin_dir_url( __FILE__ ).'css/main.css',[],filemtime($pluginpath.'css/generic_form.css'));
-	//wp_enqueue_style('generic_form_css');  
-	
 	
 	
 add_action( 'wp_enqueue_scripts', 'Afsar\wtk\wpse30583_enqueue' );

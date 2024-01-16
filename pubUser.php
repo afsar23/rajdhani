@@ -107,11 +107,12 @@ function wtk_register($pg_atts) {
 		<div>
 			<div id="response"></diV>
 		
-			<form autocomplete="off" id='reg_form' action='javascript:;' onsubmit="submitForm(this,'<?=$api_url?>',<?=$jsCallBack?>);"> 
-
+			<form id='reg_form' action='javascript:;' onsubmit="submitForm(this,'<?=$api_url?>',<?=$jsCallBack?>);"> 
+				<input autocomplete="false" name="hidden" type="text" style="display:none;">
+				
 				<div class="form-group">
-					<label for="user_name">User Name</label>
-					<input type="text" class="form-control" name="user_name" id="use_rname" placeholder="login name" required />
+					<label for="user_name" autocomplete="off">User Name</label>
+					<input type="text" class="form-control" name="user_name" id="user_name" oplaceholder="login name" />
 				</div>
 
 				<div class="form-group">
@@ -275,7 +276,7 @@ async function EmailVerificationCode(api_email_code) {
  
 	var emailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 	if(!email.match(emailformat)){	
-		alert("Please input a valid email address!")
+		w2alert("Please input a valid email address!")
 		return;
 	}
 	
@@ -290,7 +291,7 @@ function PostEmailVerification(response) {
     if (response.status=="success") {
         // do something , eg redirect to login page?
         $j('#token_hash').val(response.hash_token);
-		alert("Please check your email for Verification Code");
+		w2alert("Please check your email for Verification Code");
 	} else {
         alert(response.message);
     }	

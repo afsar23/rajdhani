@@ -160,7 +160,31 @@ function UserInfo() {
 add_action('wp_footer', 'Afsar\wtk\my_footer'); 
 function my_footer() { 
 
-	echo '<div style="background: gainsboro; color: gray;">&copy; Afsar Inc, 2023</div>'; 
+	$dummy = "background: transparent; color: transparent; width:100%; z-index:-9999 ";
+	echo '<div id="wtk_dummy_footer" style="'.$dummy.'">DUMMY!</div>'; 
+	
+	$actual = "position:fixed; bottom:0; z-index:9999; background: red; color: white; width:100%;";
+	echo '<div id="wtk_actual_footer" style="'.$actual.'">&copy; Afsar Inc, 2024</div>'; 
+	
+	?>
+
+	<script>	
+
+		$('document').ready(function(){
+			Adjust_wtk_Footer();	
+		});	
+	
+		// call this whenver content in actual footer changes
+		function Adjust_wtk_Footer() {
+			$('#wtk_dummy_footer').height($('#wtk_actual_footer').css('height'));
+        }	
+
+
+	</script>
+	
+	
+	<?php
+	
 	//mosquelist();
 	//ListAllShortCodes();
 
